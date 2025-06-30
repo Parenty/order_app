@@ -1,5 +1,8 @@
+require('dotenv').config();
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './src/index.jsx',
@@ -30,6 +33,15 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'public', to: '.', globOptions: { ignore: ['**/index.html'] } }
+      ]
+    }),
+    new webpack.DefinePlugin({
+      'process.env.REACT_APP_LOGIN': JSON.stringify(process.env.REACT_APP_LOGIN),
+      'process.env.REACT_APP_PASSWORD': JSON.stringify(process.env.REACT_APP_PASSWORD),
     }),
   ],
   devServer: {
