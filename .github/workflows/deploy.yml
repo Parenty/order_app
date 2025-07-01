@@ -5,6 +5,13 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      login:
+        description: 'Логин для авторизации'
+        required: true
+      password:
+        description: 'Пароль для авторизации'
+        required: true
 
 jobs:
   build-and-deploy:
@@ -21,10 +28,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Create .env file from secrets
+      - name: Create .env file from inputs or secrets
         run: |
-          echo "REACT_APP_LOGIN=${{ secrets.REACT_APP_LOGIN }}" >> .env
-          echo "REACT_APP_PASSWORD=${{ secrets.REACT_APP_PASSWORD }}" >> .env
+          echo "REACT_APP_LOGIN=${{ github.event.inputs.login || secrets.REACT_APP_LOGIN }}" >> .env
+          echo "REACT_APP_PASSWORD=${{ github.event.inputs.password || secrets.REACT_APP_PASSWORD }}" >> .env
 
       - name: Build project
         run: npm run build
