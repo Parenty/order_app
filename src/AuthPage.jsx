@@ -1,9 +1,29 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// Функция для получения datestamp в формате YYYYMMDD
+function getDateStamp() {
+  const d = new Date();
+  return `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+}
+
+// Простая функция хэширования (для примера)
+function simpleHash(str) {
+  let hash = 0, i, chr;
+  if (str.length === 0) return hash;
+  for (i = 0; i < str.length; i++) {
+    chr = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + chr;
+    hash |= 0;
+  }
+  return hash.toString();
+}
+
 export default function AuthPage() {
-  const loginEnv = process.env.REACT_APP_LOGIN;
-  const passwordEnv = process.env.REACT_APP_PASSWORD;
+  const tempvar = getDateStamp();
+  const loginhash = simpleHash(process.env.REACT_APP_LOGIN + tempvar);
+  const passwordhash = simpleHash(process.env.REACT_APP_PASSWORD + tempvar);
+
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -11,7 +31,9 @@ export default function AuthPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (login === loginEnv && password === passwordEnv) {
+    const inputLoginHash = simpleHash(login + tempvar);
+    const inputPasswordHash = simpleHash(password + tempvar);
+    if (inputLoginHash === loginhash && inputPasswordHash === passwordhash) {
       sessionStorage.setItem('authorized', 'true');
       navigate('/');
     } else {
