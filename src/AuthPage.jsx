@@ -21,9 +21,6 @@ function simpleHash(str) {
 
 export default function AuthPage() {
   const tempvar = getDateStamp();
-  const loginhash = simpleHash(process.env.REACT_APP_LOGIN + tempvar);
-  const passwordhash = simpleHash(process.env.REACT_APP_PASSWORD + tempvar);
-
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -33,7 +30,7 @@ export default function AuthPage() {
     e.preventDefault();
     const inputLoginHash = simpleHash(login + tempvar);
     const inputPasswordHash = simpleHash(password + tempvar);
-    if (inputLoginHash === loginhash && inputPasswordHash === passwordhash) {
+    if (inputLoginHash === simpleHash(process.env.REACT_APP_LOGIN + tempvar) && inputPasswordHash === simpleHash(process.env.REACT_APP_PASSWORD + tempvar)) {
       sessionStorage.setItem('authorized', 'true');
       navigate('/');
     } else {
